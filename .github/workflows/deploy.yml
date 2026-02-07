@@ -45,11 +45,11 @@ jobs:
         run: |
           python manage.py collectstatic --noinput
 
-      # 7️⃣ Setup SSH
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+      # # 7️⃣ Setup SSH
+      # - name: Setup SSH
+      #   uses: webfactory/ssh-agent@v0.9.0
+      #   with:
+      #     ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
 
       # 8️⃣ Deploy to Server
       - name: Deploy to Server
