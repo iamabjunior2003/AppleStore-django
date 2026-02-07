@@ -1,0 +1,71 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block content %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_product.css' %}">
+{% endblock %}
+<div class="container">
+    <h2 class="page-title">Add New Product</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="product-form">
+        {% csrf_token %}
+
+        <!-- Product Name -->
+        <div class="form-group">
+            <label for="product_name">Product Name</label>
+            <input type="text" name="product_name" id="product_name"
+                   class="form-control" placeholder="Enter product name" required>
+        </div>
+
+        <!-- Product Price -->
+        <div class="form-group">
+            <label for="product_price">Product Price (₹)</label>
+            <input type="number" step="0.01" name="product_price" id="product_price"
+                   class="form-control" placeholder="Enter price" required>
+        </div>
+
+        <!-- Product Category -->
+        <div class="form-group">
+            <label for="product_category">Category</label>
+            <select name="product_category" id="product_category" class="form-control" required>
+                <option value="">-- Select Category --</option>
+                <option value="1">Iphone</option>
+                <option value="2">Macbook</option>
+                <option value="3">Ipad</option>
+                <option value="4">Watch</option>
+                <option value="5">AirPods</option>
+                <option value="6">TV & Home</option>
+                <option value="7">Entertainment</option>
+            </select>
+        </div>
+
+        <!-- Product Description -->
+        <div class="form-group">
+            <label for="product_description">Description</label>
+            <textarea name="product_description" id="product_description"
+                      class="form-control" rows="4"
+                      placeholder="Enter product description" required></textarea>
+        </div>
+
+        <!-- Availability -->
+        <div class="form-group checkbox-group">
+            <input type="checkbox" name="is_available" id="is_available" checked>
+            <label for="is_available">Available</label>
+        </div>
+
+        <!-- Product Image -->
+        <div class="form-group">
+            <label for="product_image">Product Image</label>
+            <input type="file" name="product_image" id="product_image"
+                   class="form-control" accept="image/*" required>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                Add Product
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

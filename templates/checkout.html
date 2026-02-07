@@ -1,0 +1,92 @@
+{% extends "Base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+
+<section class="checkout-section">
+    <div class="checkout-container">
+
+        <!-- LEFT : Billing + Payment -->
+        <div class="checkout-left">
+            <h2 class="checkout-title">Checkout</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Billing -->
+                <div class="checkout-card">
+                    <h3>Billing Details</h3>
+
+                    <div class="input-row">
+                        <input type="text" name="fullname" placeholder="Full Name" required>
+                        <input type="email" name="email" placeholder="Email" required>
+                    </div>
+
+                    <input type="text" name="address" placeholder="Address" required>
+
+                    <div class="input-row">
+                        <input type="text" name="city" placeholder="City" required>
+                        <input type="text" name="pincode" placeholder="Pincode" required>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="checkout-card">
+                    <h3>Payment Method</h3>
+
+                    <label class="payment-option">
+                        <div class="payment-left">
+                            <span class="payment-icon">💳</span>
+                            <span class="payment-text">Credit / Debit Card</span>
+                        </div>
+                        <input type="radio" name="payment" value="card" checked>
+                    </label>
+
+                    <label class="payment-option">
+                        <div class="payment-left">
+                            <span class="payment-icon">📱</span>
+                            <span class="payment-text">UPI</span>
+                        </div>
+                        <input type="radio" name="payment" value="upi">
+                    </label>
+
+                    <label class="payment-option">
+                        <div class="payment-left">
+                            <span class="payment-icon">💵</span>
+                            <span class="payment-text">Cash on Delivery</span>
+                        </div>
+                        <input type="radio" name="payment" value="cod">
+                    </label>
+                </div>
+
+                <button class="pay-btn">
+                    Pay ₹{{ total_price }}
+                </button>
+            </form>
+        </div>
+
+        <!-- RIGHT : Order Summary -->
+        <div class="checkout-right">
+            <div class="checkout-summary">
+                <h3>Order Summary</h3>
+
+                {% for item in cart_items %}
+                <div class="summary-item">
+                    <span>{{ item.product.product_name }} × {{ item.quantity }}</span>
+                    <span>₹{{ item.subtotal }}</span>
+                </div>
+                {% endfor %}
+
+                <hr>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>₹{{ total_price }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

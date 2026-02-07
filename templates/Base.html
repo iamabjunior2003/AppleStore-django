@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Apple{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/Applehomepage.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <div class="homepage-container">
+        {% include 'Header.html' %}
+
+        {% block content %}{% endblock %}
+
+        {% include 'Footer.html' %}
+    </div>
+
+    <!-- ✅ CART TOAST (MUST BE BEFORE JS) -->
+    <div id="cart-toast" class="cart-toast"></div>
+
+    <!-- ✅ AUTH POPUP -->
+    <div id="auth-popup" class="auth-popup">
+        <div class="auth-popup-card">
+            <span class="auth-icon">🔒</span>
+            <h3>Sign in required</h3>
+            <p>Please sign in to add items to your cart.</p>
+
+            <a href="{% url 'login' %}" class="auth-login-btn">
+                Sign In
+            </a>
+        </div>
+    </div>
+    
+    <!-- ✅ MAIN JS -->
+    <script src="{% static 'js/Main.js' %}?v=1"></script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Close popup on outside click -->
+    <script>
+    document.getElementById("auth-popup").addEventListener("click", function (e) {
+        if (e.target === this) {
+            this.classList.remove("show");
+            document.body.style.overflow = "";
+        }
+    });
+</script>
+
+</body>
+</html>

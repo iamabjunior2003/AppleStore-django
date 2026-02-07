@@ -1,0 +1,63 @@
+{% extends "Base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+
+<section class="cart-section">
+    <div class="cart-container">
+
+        <h2 class="cart-title">Your Cart</h2>
+
+        {% if cart_items %}
+        <div class="cart-items">
+
+            {% for item in cart_items %}
+            <div class="cart-item">
+
+                <div class="cart-item-left">
+                    <img src="{{ item.product.product_image.url }}"
+                         alt="{{ item.product.product_name }}">
+                </div>
+
+                <div class="cart-item-center">
+                    <h4>{{ item.product.product_name }}</h4>
+
+                    <div class="quantity-controls">
+                        <button class="qty-btn"
+                                onclick="decreaseQty({{ item.product.id }})">−</button>
+
+                        <span class="qty-value">{{ item.quantity }}</span>
+
+                        <button class="qty-btn"
+                                onclick="increaseQty({{ item.product.id }})">+</button>
+                    </div>
+
+                    <button class="remove-btn"
+                            onclick="removeFromCart({{ item.product.id }})">
+                        Remove
+                    </button>
+                </div>
+
+                <div class="cart-item-right">
+                    <p>₹{{ item.subtotal }}</p>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="cart-summary">
+            <h3>Total</h3>
+            <h2>₹{{ total_price }}</h2>
+            <button class="checkout-btn" onclick="window.location.href='{% url 'checkout' %}'">Checkout</button>
+        </div>
+
+        {% else %}
+        <p class="empty-cart">Your cart is empty</p>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

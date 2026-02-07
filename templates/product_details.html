@@ -1,0 +1,40 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block content %}
+<!-- Product Card Section -->
+<section class="product-card-section">
+    <div class="product-card-container">
+        <div class="product-info-card">
+            <div class="product-image">
+                <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" style="width:200px; height:200px;">
+            </div>
+            <div class="product-details">
+                <h2 class="product-name">{{ product.product_name }}</h2>
+                <p class="product-description">{{ product.product_description }}</p>
+                <div class="product-specs">
+                    <div class="spec-item">
+                        <div class="spec-item price-row">
+                            <span class="current-price">₹ {{ product.product_price }}</span>
+                            <span class="original-price">₹ {{ product.original_price }}</span>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Category:</span>
+                        <span class="spec-value">{{ product.product_category }}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Availability:</span>
+                        <span class="spec-value">{{ product.is_available }}</span>
+                    </div>
+                    <div class="product-actions">
+                    <button class="btn-primary"
+                            onclick="event.stopPropagation()">
+                        Buy Now
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

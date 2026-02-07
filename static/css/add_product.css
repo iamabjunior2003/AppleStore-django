@@ -1,0 +1,130 @@
+/* =========================
+   Add Product – Apple Theme
+========================= */
+
+/* Page wrapper */
+.container {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;            /* reduced */
+    background-color: #f5f5f7;
+}
+
+/* Page title */
+.page-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 20px;           /* reduced */
+    color: #1d1d1f;
+    text-align: center;
+}
+
+/* Form card */
+.product-form {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    padding: 32px;                 /* reduced */
+    border-radius: 22px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 10px;           /* reduced */
+}
+
+/* Labels */
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;            /* reduced */
+    color: #1d1d1f;
+}
+
+/* Inputs / Select / Textarea */
+.form-control {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-radius: 14px;
+    border: 1px solid #d2d2d7;
+    background-color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Focus state */
+.form-control:focus {
+    border-color: #0071e3;
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+}
+
+/* Placeholder */
+.form-control::placeholder {
+    color: #86868b;
+}
+
+/* Textarea */
+textarea.form-control {
+    resize: none;
+}
+
+/* Checkbox */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;                      /* reduced */
+    font-size: 14px;
+    color: #1d1d1f;
+}
+
+.checkbox-group input {
+    width: 16px;
+    height: 16px;
+    accent-color: #0071e3;
+}
+
+/* File input */
+input[type="file"].form-control {
+    padding: 12px;
+}
+
+/* Submit button */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 999px;
+    border: none;
+    background-color: #0071e3;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+    background-color: #005bb5;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .product-form {
+        padding: 24px;             /* reduced */
+    }
+
+    .page-title {
+        font-size: 28px;
+    }
+}
+

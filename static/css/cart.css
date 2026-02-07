@@ -1,0 +1,335 @@
+/* ======================
+   Cart Page – Apple Style
+====================== */
+
+.cart-section {
+    background: #f5f5f7;
+    min-height: calc(100vh - 120px);
+    padding: 60px 20px;
+}
+
+.cart-container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.cart-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+
+/* Cart Items */
+.cart-items {
+    background: #fff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-left img {
+    width: 90px;
+    border-radius: 12px;
+}
+
+.cart-item-center h4 {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.cart-item-center p {
+    color: #6e6e73;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.cart-item-right {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Cart Summary */
+.cart-summary {
+    margin-top: 30px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.cart-summary h3 {
+    font-size: 18px;
+    color: #6e6e73;
+}
+
+.cart-summary h2 {
+    font-size: 28px;
+}
+
+/* Checkout Button */
+.checkout-btn {
+    background: #0071e3;
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.checkout-btn:hover {
+    background: #005bb5;
+}
+
+/* Empty Cart */
+.empty-cart {
+    font-size: 20px;
+    color: #6e6e73;
+    text-align: center;
+    margin-top: 80px;
+}
+
+/* =========================
+   MOBILE CART FIX (IMPORTANT)
+========================= */
+
+@media (max-width: 600px) {
+
+    .cart-title {
+        font-size: 26px;
+        margin-bottom: 24px;
+        text-align: center;
+    }
+
+    .cart-items {
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px 0;
+        gap: 12px;
+    }
+
+    .cart-item-left img {
+        width: 110px;
+        margin-bottom: 8px;
+    }
+
+    .cart-item-center h4 {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .cart-item-center p {
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .quantity-controls {
+        justify-content: center;
+        margin-top: 8px;
+    }
+
+    .cart-item-right {
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    .remove-btn {
+        margin-top: 6px;
+        font-size: 14px;
+        color: #d0021b;
+    }
+
+    .cart-summary {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .checkout-btn {
+        width: 100%;
+        font-size: 16px;
+        padding: 14px;
+    }
+}
+
+
+/* ===============================
+   Apple Premium Checkout Theme
+=============================== */
+
+:root {
+    --apple-bg: #f5f5f7;
+    --apple-white: #ffffff;
+    --apple-text: #1d1d1f;
+    --apple-gray: #86868b;
+    --apple-border: #d2d2d7;
+    --apple-blue: #0071e3;
+    --apple-blue-hover: #005bb5;
+    --apple-radius: 14px;
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: var(--apple-bg);
+    color: var(--apple-text);
+}
+
+/* ===============================
+   Checkout Section
+=============================== */
+.checkout-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.checkout-container {
+    width: 100%;
+    max-width: 420px;
+    background: var(--apple-white);
+    border-radius: var(--apple-radius);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    padding: 32px;
+}
+
+/* ===============================
+   Titles & Text
+=============================== */
+.checkout-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.checkout-container p {
+    font-size: 15px;
+    color: var(--apple-gray);
+    text-align: center;
+    margin-top: 6px;
+}
+
+/* ===============================
+   Form Styling
+=============================== */
+form {
+    margin-top: 24px;
+}
+
+input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--apple-border);
+    background-color: #fafafa;
+    outline: none;
+    margin-bottom: 14px;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+input::placeholder {
+    color: var(--apple-gray);
+}
+
+input:focus {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+    background-color: #ffffff;
+}
+
+/* Two Inputs in One Row */
+.input-row {
+    display: flex;
+    gap: 12px;
+}
+
+/* ===============================
+   Pay Button
+=============================== */
+.pay-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 999px;
+    border: none;
+    background-color: var(--apple-blue);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.pay-btn:hover {
+    background-color: var(--apple-blue-hover);
+    transform: translateY(-1px);
+}
+
+.pay-btn:active {
+    transform: scale(0.98);
+}
+
+/* ===============================
+   Success Pages Styling
+=============================== */
+.checkout-left {
+    text-align: center;
+}
+
+.checkout-left h2 {
+    font-size: 26px;
+}
+
+.checkout-left p {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* ===============================
+   Mobile Responsive
+=============================== */
+@media (max-width: 480px) {
+    .checkout-container {
+        padding: 24px;
+    }
+
+    .checkout-title {
+        font-size: 22px;
+    }
+}

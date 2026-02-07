@@ -1,0 +1,164 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+
+.apple-filter-bar {
+    max-width: 1200px;
+    margin: 0 auto 50px;
+    padding: 20px;
+}
+
+.filter-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 18px 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+}
+
+.filter-group {
+    display: flex;
+    gap: 12px;
+}
+
+/* Inputs */
+.filter-input {
+    width: 130px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid #d2d2d7;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+    border-color: #0071e3;
+    box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
+}
+
+/* Select */
+.filter-select {
+    padding: 12px 18px;
+    border-radius: 999px;
+    border: 1px solid #d2d2d7;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-select:hover {
+    border-color: #0071e3;
+}
+
+/* Button */
+.filter-btn {
+    padding: 12px 26px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0071e3, #005bb5);
+    color: #fff;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(0,113,227,0.35);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .filter-form {
+        flex-direction: column;
+        gap: 14px;
+    }
+}
+</style>
+<!-- PAGE HEADER -->
+<section class="apple-header">
+    <h1><a href="{% url 'add_product' %}">Add New Product</a></h1>
+    <p>Designed with simplicity. Built to stand out.</p>
+</section>
+<!-- APPLE FILTER BAR -->
+<section class="apple-filter-bar">
+    <form method="GET" class="filter-form">
+
+        <div class="filter-group">
+            <input type="number" name="min_price"
+                   placeholder="Min ₹"
+                   value="{{ min_price }}"
+                   class="filter-input">
+
+            <input type="number" name="max_price"
+                   placeholder="Max ₹"
+                   value="{{ max_price }}"
+                   class="filter-input">
+        </div>
+
+        <div class="filter-group">
+            <select name="sort" class="filter-select">
+                <option value="">Sort By</option>
+                <option value="price_asc"
+                        {% if sort == 'price_asc' %}selected{% endif %}>
+                    Price: Low → High
+                </option>
+                <option value="price_desc"
+                        {% if sort == 'price_desc' %}selected{% endif %}>
+                    Price: High → Low
+                </option>
+            </select>
+        </div>
+
+        <button class="filter-btn">Apply</button>
+    </form>
+</section>
+
+
+<section class="product-card-section">
+    <div class="product-card-container">
+
+        {% for product in data %}
+        <div class="product-info-card"
+             onclick="window.location.href='{% url 'product_detail' product.id %}'">
+
+            <div class="product-image">
+                <img src="{{ product.product_image.url }}"
+                     alt="{{ product.product_name }}"
+                     style="width:200px; height:200px;">
+            </div>
+
+            <div class="product-details">
+                <h2 class="product-name">{{ product.product_name }}</h2>
+
+                <div class="product-specs">
+                    <div class="price-row">
+                        <span class="current-price">₹ {{ product.product_price }}</span>
+                        <span class="original-price">₹ {{ product.original_price }}</span>
+                    </div>
+                </div>
+
+                <div class="product-actions">
+                    <button class="btn-primary add-to-cart-btn"
+                            onclick="addToCart(event, {{ product.id }})">
+                          🛒 Add to Cart
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+{% endblock %}

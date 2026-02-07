@@ -1,0 +1,36 @@
+{% extends "Base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="checkout-section">
+    <div class="checkout-container">
+        <div class="checkout-left">
+
+            <h2 class="checkout-title">Card Payment</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <input type="text" placeholder="Card Number" required>
+
+                <div class="input-row">
+                    <input type="text" placeholder="MM / YY" required>
+                    <input type="text" placeholder="CVV" required>
+                </div>
+
+                <input type="text" placeholder="Card Holder Name" required>
+
+                <button class="pay-btn">Pay Securely</button>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,222 @@
+/* ======================================
+   GLOBAL RESPONSIVE FIXES
+====================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Containers */
+.container,
+.cart-container,
+.product-card-container,
+.footer-content,
+.navbar-content {
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* ======================================
+   NAVBAR RESPONSIVE
+====================================== */
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .navbar-content {
+        padding: 10px 16px;
+    }
+
+    .navbar-left {
+        gap: 12px;
+    }
+
+    .navbar-right {
+        gap: 10px;
+    }
+
+    .icon-button {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* ======================================
+   PRODUCT GRID RESPONSIVE
+====================================== */
+
+@media (max-width: 1024px) {
+    .product-card-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .product-card-container {
+        grid-template-columns: 1fr;
+    }
+
+    .product-info-card {
+        padding: 20px;
+    }
+
+    .product-name {
+        font-size: 22px;
+    }
+
+    .product-description {
+        font-size: 14px;
+    }
+
+    .product-image img {
+        width: 140px;
+    }
+}
+
+/* ======================================
+   CART PAGE RESPONSIVE
+====================================== */
+
+@media (max-width: 768px) {
+    .cart-section {
+        padding: 40px 16px;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .cart-item-left img {
+        width: 70px;
+    }
+
+    .cart-item-center h4 {
+        font-size: 16px;
+    }
+
+    .cart-item-right {
+        font-size: 16px;
+    }
+
+    .cart-summary {
+        flex-direction: column;
+        gap: 14px;
+        text-align: center;
+    }
+
+    .checkout-btn {
+        width: 100%;
+    }
+}
+
+/* ======================================
+   FORMS (LOGIN / REGISTER / ADD PRODUCT)
+====================================== */
+
+@media (max-width: 480px) {
+    .register-wrapper,
+    .container {
+        padding: 20px 14px;
+    }
+
+    .register-card,
+    .product-form {
+        padding: 24px 20px;
+        border-radius: 20px;
+    }
+
+    .register-header h1,
+    .page-title {
+        font-size: 24px;
+    }
+
+    input,
+    textarea,
+    select,
+    button {
+        font-size: 14px;
+    }
+
+    .btn-primary,
+    .register-btn {
+        padding: 12px;
+    }
+}
+
+/* ======================================
+   PROFILE POPUP RESPONSIVE
+====================================== */
+
+@media (max-width: 480px) {
+    .profile-popup,
+    .apple-profile-dropdown {
+        width: 200px;
+        right: -8px;
+    }
+
+    .popup-header strong {
+        font-size: 13px;
+    }
+
+    .popup-header span {
+        font-size: 11px;
+    }
+}
+
+/* ======================================
+   FOOTER RESPONSIVE
+====================================== */
+
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ======================================
+   SMALL UI FIXES
+====================================== */
+
+.cart-toast {
+    right: 16px;
+    bottom: 16px;
+}
+
+.auth-popup-card {
+    width: 90%;
+}
+

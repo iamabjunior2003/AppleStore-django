@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Apple ID</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Register CSS -->
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+
+<div class="register-wrapper">
+    <div class="register-card">
+
+        <!-- Header -->
+        <div class="register-header">
+            <h1>Create your account</h1>
+            <p>Start your Apple journey here.</p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" class="register-form">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <input type="text" name="username" required>
+                <label>Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+
+            <button type="submit" class="register-btn">
+                Continue
+            </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="register-footer">
+            Already have an account?
+            <a href="{% url 'register' %}">Sign Up</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
