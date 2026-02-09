@@ -1,0 +1,28 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: apple_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: apple_products
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Aditya@0129
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    container_name: apple_web
+    command: gunicorn apple.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:

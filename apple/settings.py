@@ -83,15 +83,15 @@ if 'GITHUB_ACTIONS' in os.environ:
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'your_db',
-            'USER': 'your_user',
-            'PASSWORD': 'your_password',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'apple_products',
+        'USER': 'apple_user',
+        'PASSWORD': 'apple_pass',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -131,8 +131,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# 👇 where your source CSS/JS files are
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+# 👇 where collectstatic puts files (production)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 MEDIA_URL = '/media/'
