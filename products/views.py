@@ -1,11 +1,18 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from .models import Products,Users
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Products
 from django.http import HttpResponse, JsonResponse
-from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
 import qrcode
 import io
 import base64
+
+
+# ---------------------------
+# PRODUCTS
+# ---------------------------
 
 def display_products(request):
     data = Products.objects.all()
@@ -32,13 +39,13 @@ def display_products(request):
     })
 
 
-
 def product_detail(request, id):
-    product = Products.objects.get(id=id)
+    product = get_object_or_404(Products, id=id)
     return render(request, 'product_details.html', {'product': product})
 
+
 def add_product(request):
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return redirect('login')
 
     if request.method == "POST":
@@ -53,7 +60,6 @@ def add_product(request):
         return redirect('home')
 
     return render(request, 'add_product.html')
-
 
 
 def filter_products(request, category_id):
@@ -80,15 +86,17 @@ def filter_products(request, category_id):
         'sort': sort
     })
 
+
+# ---------------------------
+# CART
+# ---------------------------
+
 def add_to_cart(request, id):
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return JsonResponse({'status': 'auth_required'}, status=401)
 
     product = get_object_or_404(Products, id=id)
     cart = request.session.get('cart', {})
-
-    if not isinstance(cart, dict):
-        cart = {}
 
     pid = str(id)
     cart[pid] = cart.get(pid, 0) + 1
@@ -102,14 +110,12 @@ def add_to_cart(request, id):
         'cart_count': sum(cart.values())
     })
 
+
 def cart_view(request):
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return redirect('login')
-    cart = request.session.get('cart')
 
-    if not isinstance(cart, dict):
-        cart = {}
-
+    cart = request.session.get('cart', {})
     cart_items = []
     total_price = 0
 
@@ -131,60 +137,59 @@ def cart_view(request):
 
 
 def remove_from_cart(request, id):
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return redirect('login')
-    cart = request.session.get('cart', {})
 
+    cart = request.session.get('cart', {})
     product_id = str(id)
 
-    if isinstance(cart, dict) and product_id in cart:
+    if product_id in cart:
         del cart[product_id]
         request.session['cart'] = cart
         request.session.modified = True
 
     return JsonResponse({
         'status': 'success',
-        'cart_count': sum(cart.values()) if isinstance(cart, dict) else 0
+        'cart_count': sum(cart.values())
     })
 
 
 def increase_quantity(request, id):
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return redirect('login')
-    
+
     cart = request.session.get('cart', {})
     product_id = str(id)
 
-    if isinstance(cart, dict):
-        cart[product_id] = cart.get(product_id, 0) + 1
-        request.session['cart'] = cart
-        request.session.modified = True
+    cart[product_id] = cart.get(product_id, 0) + 1
 
-    return JsonResponse({
-        'status': 'success'
-    })
+    request.session['cart'] = cart
+    request.session.modified = True
+
+    return JsonResponse({'status': 'success'})
 
 
 def decrease_quantity(request, id):
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return redirect('login')
-    
+
     cart = request.session.get('cart', {})
     product_id = str(id)
 
-    if isinstance(cart, dict) and product_id in cart:
+    if product_id in cart:
         cart[product_id] -= 1
-
         if cart[product_id] <= 0:
             del cart[product_id]
 
-        request.session['cart'] = cart
-        request.session.modified = True
+    request.session['cart'] = cart
+    request.session.modified = True
 
-    return JsonResponse({
-        'status': 'success'
-    })
+    return JsonResponse({'status': 'success'})
 
+
+# ---------------------------
+# AUTHENTICATION (SECURE)
+# ---------------------------
 
 def register(request):
     if request.method == "POST":
@@ -196,13 +201,13 @@ def register(request):
         if password != confirm_password:
             return HttpResponse("Passwords do not match")
 
-        if Users.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
             return HttpResponse("Username already exists")
 
-        Users.objects.create(
+        User.objects.create_user(
             username=username,
             email=email,
-            password=password   
+            password=password
         )
 
         return redirect('login')
@@ -215,53 +220,45 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
 
+        user = authenticate(request, username=username, password=password)
 
-        try:
-            user = Users.objects.get(username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
 
-            # ✅ store login state
+            # Optional session values (if you still want them)
             request.session['user_id'] = user.id
             request.session['username'] = user.username
             request.session['email'] = user.email
 
             return redirect('home')
-
-        except Users.DoesNotExist:
+        else:
             return HttpResponse("Invalid username or password")
 
     return render(request, 'login.html')
 
-def logout(request):
-    user_id = request.session.get('user_id')
-    username = request.session.get('username')
-    email = request.session.get('email')
 
-    # Optional flash (for testing / dev)
+def logout(request):
+    username = request.user.username if request.user.is_authenticated else None
+    auth_logout(request)
+
     if username:
         messages.success(request, f"Logged out: {username}")
 
-
-    request.session.pop('user_id', None)
-    request.session.pop('username', None)
-    request.session.pop('email', None)
-
-    request.session.modified = True
-
     return redirect('home')
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Products
+
+# ---------------------------
+# CHECKOUT & PAYMENT
+# ---------------------------
 
 def checkout(request):
-    # Require login
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return redirect('login')
 
     cart = request.session.get('cart', {})
     cart_items = []
     total_price = 0
 
-    # Calculate cart total
     for product_id, quantity in cart.items():
         product = get_object_or_404(Products, id=int(product_id))
         subtotal = product.product_price * quantity
@@ -273,21 +270,15 @@ def checkout(request):
             'subtotal': subtotal
         })
 
-    # Handle payment selection
     if request.method == "POST":
         payment_method = request.POST.get("payment")
-
-        # Store total for payment pages
         request.session["payment_amount"] = total_price
 
         if payment_method == "upi":
             return redirect("upi_payment")
-
         elif payment_method == "card":
             return redirect("card_payment")
-
         elif payment_method == "cod":
-            # COD → Order confirmed
             request.session['cart'] = {}
             return redirect("cod_success")
 
@@ -298,10 +289,6 @@ def checkout(request):
 
 
 def upi_payment(request):
-    """
-    Generate UPI QR dynamically for cart amount
-    """
-
     amount = request.session.get("payment_amount")
     if not amount:
         return redirect("checkout")
@@ -311,18 +298,12 @@ def upi_payment(request):
     note = "Order Payment"
 
     upi_url = (
-        f"upi://pay?"
-        f"pa={upi_id}&"
-        f"pn={payee_name}&"
-        f"am={amount}&"
-        f"cu=INR&"
-        f"tn={note}"
+        f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR&tn={note}"
     )
 
     qr = qrcode.make(upi_url)
     buffer = io.BytesIO()
     qr.save(buffer, format="PNG")
-
     qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
     return render(request, "upi_payment.html", {
@@ -333,26 +314,16 @@ def upi_payment(request):
 
 
 def card_payment(request):
-    """
-    Card payment UI (no gateway yet)
-    """
-
     if request.method == "POST":
-        # later integrate Razorpay / Stripe
+        request.session['cart'] = {}
         return redirect("payment_success")
 
     return render(request, "card_payment.html")
 
 
 def cod_success(request):
-    """
-    Cash on Delivery success page
-    """
     return render(request, "cod_success.html")
 
 
 def payment_success(request):
-    """
-    Common success page
-    """
     return render(request, "payment_success.html")
