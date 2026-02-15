@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+
 <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
 
 <section class="checkout-section">
@@ -9,21 +10,21 @@
 
         <!-- LEFT : Billing + Payment -->
         <div class="checkout-left">
-            <h2 class="checkout-title">Checkout</h2>
+            <h2 class="checkout-title">Secure Checkout 🔒</h2>
 
-            <form method="POST">
+            <form method="POST" id="checkoutForm">
                 {% csrf_token %}
 
-                <!-- Billing -->
+                <!-- ================= Billing ================= -->
                 <div class="checkout-card">
                     <h3>Billing Details</h3>
 
                     <div class="input-row">
                         <input type="text" name="fullname" placeholder="Full Name" required>
-                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="email" name="email" placeholder="Email Address" required>
                     </div>
 
-                    <input type="text" name="address" placeholder="Address" required>
+                    <input type="text" name="address" placeholder="Street Address" required>
 
                     <div class="input-row">
                         <input type="text" name="city" placeholder="City" required>
@@ -31,9 +32,9 @@
                     </div>
                 </div>
 
-                <!-- Payment -->
+                <!-- ================= Payment ================= -->
                 <div class="checkout-card">
-                    <h3>Payment Method</h3>
+                    <h3>Select Payment Method</h3>
 
                     <label class="payment-option">
                         <div class="payment-left">
@@ -60,21 +61,28 @@
                     </label>
                 </div>
 
-                <button class="pay-btn">
+                <!-- ================= Pay Button ================= -->
+                <button type="submit" class="pay-btn" id="payButton">
                     Pay ₹{{ total_price }}
                 </button>
+
             </form>
         </div>
 
         <!-- RIGHT : Order Summary -->
         <div class="checkout-right">
             <div class="checkout-summary">
-                <h3>Order Summary</h3>
+                <h3>Your Order</h3>
 
                 {% for item in cart_items %}
                 <div class="summary-item">
                     <span>{{ item.product.product_name }} × {{ item.quantity }}</span>
                     <span>₹{{ item.subtotal }}</span>
+                </div>
+                {% empty %}
+                <div class="summary-item">
+                    <span>Your cart is empty</span>
+                    <span>₹0</span>
                 </div>
                 {% endfor %}
 
@@ -89,4 +97,16 @@
 
     </div>
 </section>
+
+<!-- ================= Loading Animation Script ================= -->
+<script>
+    const form = document.getElementById("checkoutForm");
+    const payButton = document.getElementById("payButton");
+
+    form.addEventListener("submit", function () {
+        payButton.classList.add("loading");
+        payButton.innerText = "Processing...";
+    });
+</script>
+
 {% endblock %}

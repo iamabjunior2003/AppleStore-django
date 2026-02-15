@@ -1,16 +1,38 @@
+/* ================================
+   GLOBAL RESET
+================================ */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ================================
+   MAIN SECTION
+================================ */
 .checkout-section {
     min-height: 100vh;
-    background: #f5f5f7;
+    background: linear-gradient(135deg, #f5f5f7, #e9eef5);
     padding: 60px 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+        'Segoe UI', Roboto, sans-serif;
+    animation: fadePage 0.6s ease-in-out;
 }
 
+@keyframes fadePage {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================
+   CONTAINER GRID
+================================ */
 .checkout-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -20,22 +42,33 @@
     align-items: start;
 }
 
-/* LEFT SECTION */
+/* ================================
+   LEFT SECTION
+================================ */
 .checkout-left {
     background: #ffffff;
-    border-radius: 18px;
+    border-radius: 20px;
     padding: 48px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.checkout-left:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
 }
 
 .checkout-title {
-    font-size: 40px;
+    font-size: 38px;
     font-weight: 700;
     letter-spacing: -0.02em;
     color: #1d1d1f;
     margin-bottom: 40px;
 }
 
+/* ================================
+   CARD SECTIONS
+================================ */
 .checkout-card {
     margin-bottom: 36px;
 }
@@ -45,36 +78,40 @@
     font-weight: 600;
     color: #1d1d1f;
     margin-bottom: 24px;
-    letter-spacing: -0.01em;
 }
 
-/* INPUT FIELDS */
+/* ================================
+   INPUT FIELDS
+================================ */
 input[type="text"],
 input[type="email"] {
     width: 100%;
     padding: 16px 18px;
-    font-size: 17px;
+    font-size: 16px;
     border: 1px solid #d2d2d7;
-    border-radius: 12px;
+    border-radius: 14px;
     background: #ffffff;
     color: #1d1d1f;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     font-family: inherit;
     margin-bottom: 16px;
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus {
-    outline: none;
-    border-color: #0071e3;
-    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
-}
-
-input[type="text"]::placeholder,
-input[type="email"]::placeholder {
+input::placeholder {
     color: #86868b;
 }
 
+input:hover {
+    border-color: #a1a1a6;
+}
+
+input:focus {
+    outline: none;
+    border-color: #0071e3;
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12);
+}
+
+/* TWO COLUMN INPUT */
 .input-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -90,23 +127,27 @@ input[type="email"]::placeholder {
     margin-top: 16px;
 }
 
-/* PAYMENT OPTIONS */
+/* ================================
+   PAYMENT OPTIONS
+================================ */
 .payment-option {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
     border: 2px solid #d2d2d7;
-    border-radius: 12px;
-    margin-bottom: 12px;
+    border-radius: 14px;
+    margin-bottom: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     background: #ffffff;
+    position: relative;
+    overflow: hidden;
 }
 
 .payment-option:hover {
     border-color: #0071e3;
-    background: #f5f5f7;
+    background: #f2f7ff;
 }
 
 .payment-option:has(input:checked) {
@@ -121,52 +162,85 @@ input[type="email"]::placeholder {
 }
 
 .payment-icon {
-    font-size: 24px;
-    display: flex;
-    align-items: center;
+    font-size: 22px;
 }
 
 .payment-text {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 500;
     color: #1d1d1f;
 }
 
 input[type="radio"] {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     accent-color: #0071e3;
     cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
-/* PAY BUTTON */
+input[type="radio"]:checked {
+    transform: scale(1.1);
+}
+
+/* ================================
+   PAY BUTTON
+================================ */
 .pay-btn {
     width: 100%;
     padding: 18px;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
     color: #ffffff;
-    background: #0071e3;
+    background: linear-gradient(135deg, #0071e3, #0057c2);
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
     margin-top: 32px;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     font-family: inherit;
-    letter-spacing: -0.01em;
 }
 
 .pay-btn:hover {
-    background: #0077ed;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 113, 227, 0.35);
+    background: linear-gradient(135deg, #0077ed, #004aad);
 }
 
 .pay-btn:active {
     transform: translateY(0);
 }
 
-/* RIGHT SECTION - ORDER SUMMARY */
+/* Loading State */
+.pay-btn.loading {
+    pointer-events: none;
+    opacity: 0.85;
+    position: relative;
+}
+
+.pay-btn.loading::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.6);
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* ================================
+   RIGHT SECTION (SUMMARY)
+================================ */
 .checkout-right {
     position: sticky;
     top: 80px;
@@ -174,59 +248,67 @@ input[type="radio"] {
 
 .checkout-summary {
     background: #ffffff;
-    border-radius: 18px;
+    border-radius: 20px;
     padding: 36px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.checkout-summary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
 }
 
 .checkout-summary h3 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
     color: #1d1d1f;
     margin-bottom: 28px;
-    letter-spacing: -0.01em;
 }
 
+/* Summary Items */
 .summary-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 14px 0;
-    font-size: 16px;
-    color: #1d1d1f;
+    font-size: 15px;
 }
 
 .summary-item span:first-child {
-    color: #515154;
+    color: #6e6e73;
 }
 
 .summary-item span:last-child {
     font-weight: 500;
-    color: #1d1d1f;
 }
 
 hr {
     border: none;
-    border-top: 1px solid #d2d2d7;
+    border-top: 1px solid #e0e0e0;
     margin: 20px 0;
 }
 
+/* Total */
 .summary-total {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-top: 20px;
+    padding-top: 18px;
     font-size: 20px;
     font-weight: 600;
-    color: #1d1d1f;
 }
 
 .summary-total span:last-child {
-    font-size: 28px;
-    letter-spacing: -0.02em;
+    font-size: 26px;
+    transition: transform 0.3s ease;
 }
 
-/* RESPONSIVE */
+.summary-total:hover span:last-child {
+    transform: scale(1.05);
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+================================ */
 @media (max-width: 968px) {
     .checkout-container {
         grid-template-columns: 1fr;
@@ -246,7 +328,7 @@ hr {
     }
 
     .checkout-title {
-        font-size: 32px;
+        font-size: 30px;
     }
 }
 
@@ -259,20 +341,12 @@ hr {
         grid-template-columns: 1fr;
     }
 
-    .checkout-left {
-        padding: 24px 20px;
-    }
-
     .checkout-title {
-        font-size: 28px;
-        margin-bottom: 28px;
-    }
-
-    .checkout-card h3 {
-        font-size: 20px;
+        font-size: 26px;
     }
 
     .summary-total span:last-child {
-        font-size: 24px;
+        font-size: 22px;
     }
 }
+
