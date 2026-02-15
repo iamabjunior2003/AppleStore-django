@@ -26,7 +26,6 @@ SECRET_KEY = 'django-insecure-n$wc9u=me6cf$yudx62a5aw(-mfu=r%z14xo47xh7!q#q4wpsa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-import dj_database_url
 ALLOWED_HOSTS = ['*']
 
 
@@ -75,29 +74,23 @@ WSGI_APPLICATION = 'apple.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# if 'GITHUB_ACTIONS' in os.environ:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': BASE_DIR / 'db.sqlite3',
-#         }
-#     }
-# else:
-#     DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'apple_products',
-#         'USER': 'apple_user',
-#         'PASSWORD': 'apple_pass',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
+if 'GITHUB_ACTIONS' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'apple_products',
+        'USER': 'apple_user',
+        'PASSWORD': 'apple_pass',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

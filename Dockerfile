@@ -23,4 +23,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["gunicorn", "apple.wsgi:apple", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "apple.wsgi:application", "--bind", "0.0.0.0:8000"]
