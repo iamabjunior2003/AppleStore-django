@@ -14,4 +14,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8080
 
-CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8080"]
+CMD ["gunicorn", "mysite.wsgi:apple", "--bind", "0.0.0.0:8080"]
