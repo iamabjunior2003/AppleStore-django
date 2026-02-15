@@ -28,6 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+import os
+import dj_database_url
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 # Application definition
 
@@ -80,6 +84,10 @@ if 'GITHUB_ACTIONS' in os.environ:
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
+    }
+elif DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
     }
 else:
     DATABASES = {
