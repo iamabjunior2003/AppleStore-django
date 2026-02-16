@@ -22,5 +22,5 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
-
+RUN python manage.py migrate
 CMD ["sh", "-c", "gunicorn apple.wsgi:application --bind 0.0.0.0:${PORT}"]
