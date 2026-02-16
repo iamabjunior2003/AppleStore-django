@@ -9,31 +9,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: AppleStore-django
+
     steps:
-      # 1️⃣ Checkout repo
       - uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 3️⃣ Install dependencies
-      - name: Install requirements
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install -r requirements.txt
 
-      # 4️⃣ Run Django check
-      - name: Django Check
-        run: |
-          python manage.py check
+      - name: Verify Django Installed
+        run: python -m django --version
+
+      - name: Django check
+        run: python manage.py check
         env:
-          SECRET_KEY: testsecret
+          SECRET_KEY: test
           DEBUG: True
           DATABASE_URL: sqlite:///db.sqlite3
 
-      # 5️⃣ Deploy to Render
-      - name: Trigger Render Deploy
-        run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      - name: Deploy to Render
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
