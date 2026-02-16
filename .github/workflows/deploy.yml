@@ -9,10 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: AppleStore-django
-
     steps:
       - uses: actions/checkout@v4
 
@@ -20,10 +16,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+        run: python -m pip install -r requirements.txt
 
       - name: Verify Django Installed
         run: python -m django --version
