@@ -21,6 +21,8 @@ ALLOWED_HOSTS = [
     '.onrender.com',   # allows your render domain
 ]
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 # ==============================
 # APPLICATIONS
@@ -89,9 +91,7 @@ WSGI_APPLICATION = 'apple.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
-    )
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
 
