@@ -31,7 +31,7 @@ def display_products(request):
     elif sort == "price_desc":
         data = data.order_by('-product_price')
 
-    return render(request, 'Home.html', {
+    return render(request, 'home.html', {
         'data': data,
         'min_price': min_price,
         'max_price': max_price,
