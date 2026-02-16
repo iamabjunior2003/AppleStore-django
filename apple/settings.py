@@ -90,9 +90,26 @@ WSGI_APPLICATION = 'apple.wsgi.application'
 
 
 
-DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-}
+# ==============================
+# DATABASE
+# ==============================
+
+if os.environ.get("DATABASE_URL"):
+    # Production (Render PostgreSQL)
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=600,
+        )
+    }
+else:
+    # Local Development (SQLite)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # ==============================
