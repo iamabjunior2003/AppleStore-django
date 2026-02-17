@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ==============================
 
 # Use environment variable in production
-SECRET_KEY = 'django-insecure-n$wc9u=me6cf$yudx62a5aw(-mfu=r%z14xo47xh7!q#q4wpsa'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # Render automatically sets this
 DEBUG = True
@@ -104,17 +104,14 @@ if os.environ.get("DATABASE_URL"):
         )
     }
 else:
-    # Local Development MySQL
+    # Local Development (SQLite)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'apple_products',
-            'USER': 'root',
-            'PASSWORD': 'Aditya@0229',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }   
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
+
 
 # ==============================
 # PASSWORD VALIDATION
