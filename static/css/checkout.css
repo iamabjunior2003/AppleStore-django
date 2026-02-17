@@ -350,3 +350,13 @@ hr {
     }
 }
 
+/* Saved Address Option */
+.saved-address-option {
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.saved-address-option strong {
+    font-size: 16px;
+    color: #1d1d1f;
+}

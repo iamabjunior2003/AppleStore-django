@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+
+<section class="checkout-section">
+    <div class="checkout-container" style="max-width:800px;">
+
+        <h2 class="checkout-title">Manage Addresses 📦</h2>
+
+        <!-- ================= EXISTING ADDRESSES ================= -->
+        <div class="checkout-card">
+            <h3>Your Saved Addresses</h3>
+
+            {% if addresses %}
+                {% for address in addresses %}
+                    <div style="margin-bottom:15px; padding:15px; border:1px solid #ddd; border-radius:10px;">
+
+                        <strong>{{ address.fullname }}</strong>
+                        {% if address.is_default %}
+                            <span style="color:green;">(Default)</span>
+                        {% endif %}
+                        <br>
+
+                        {{ address.address }}<br>
+                        {{ address.city }}, {{ address.state }} - {{ address.pincode }}<br>
+                        Mobile: {{ address.mobile }}
+
+                        <div style="margin-top:10px;">
+                            <a href="{% url 'edit_address' address.id %}">Edit</a> |
+                            <a href="{% url 'delete_address' address.id %}">Delete</a> |
+                            <a href="{% url 'set_default_address' address.id %}">
+                                Set Default
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No addresses added yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- ================= ADD NEW ADDRESS ================= -->
+        <div class="checkout-card" style="margin-top:30px;">
+            <h3>Add New Address</h3>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div style="margin-bottom:15px;">
+                    <input type="text" name="fullname"
+                           placeholder="Full Name"
+                           required style="width:100%; padding:10px;">
+                </div>
+
+                <div style="margin-bottom:15px;">
+                    <textarea name="address"
+                              placeholder="Street Address"
+                              required style="width:100%; padding:10px;"></textarea>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="text" name="city"
+                           placeholder="City"
+                           required style="flex:1; padding:10px;">
+
+                    <input type="text" name="state"
+                           placeholder="State"
+                           required style="flex:1; padding:10px;">
+                </div>
+
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="text" name="pincode"
+                           placeholder="Pincode"
+                           required style="flex:1; padding:10px;">
+
+                    <input type="text" name="mobile"
+                           placeholder="Mobile Number"
+                           required style="flex:1; padding:10px;">
+                </div>
+
+                <button type="submit"
+                        style="padding:10px 20px; background:black; color:white; border:none; border-radius:6px;">
+                    Save Address
+                </button>
+
+            </form>
+        </div>
+
+        <!-- ================= BACK BUTTON ================= -->
+        <div style="margin-top:20px;">
+            <a href="{% url 'checkout' %}" style="color:blue;">
+                ← Back to Checkout
+            </a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

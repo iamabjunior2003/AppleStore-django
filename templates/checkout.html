@@ -15,24 +15,65 @@
             <form method="POST" id="checkoutForm">
                 {% csrf_token %}
 
-                <!-- ================= Billing ================= -->
+                <!-- ================= SAVED ADDRESSES ================= -->
+                {% if addresses %}
                 <div class="checkout-card">
-                    <h3>Billing Details</h3>
+                    <h3>Select Saved Address</h3>
+
+                    {% for address in addresses %}
+                    <label class="payment-option saved-address-option">
+                        <div class="payment-left">
+                            <div>
+                                <strong>{{ address.fullname }}</strong><br>
+                                <span style="font-size:14px;color:#6e6e73;">
+                                    {{ address.address }}, {{ address.city }} - {{ address.pincode }}<br>
+                                    {{ address.mobile }}
+                                </span>
+                            </div>
+                        </div>
+                        <input type="radio"
+                               name="selected_address"
+                               value="{{ address.id }}">
+                    </label>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- ================= ADD NEW ADDRESS ================= -->
+                <div class="checkout-card">
+                    <h3>Add New Address</h3>
 
                     <div class="input-row">
-                        <input type="text" name="fullname" placeholder="Full Name" required>
-                        <input type="email" name="email" placeholder="Email Address" required>
+                        <input type="text"
+                               name="fullname"
+                               placeholder="Full Name">
+
+                        <input type="email"
+                               name="email"
+                               placeholder="Email Address"
+                               value="{{ request.user.email }}">
                     </div>
 
-                    <input type="text" name="address" placeholder="Street Address" required>
+                    <input type="text"
+                           name="address"
+                           placeholder="Street Address">
 
                     <div class="input-row">
-                        <input type="text" name="city" placeholder="City" required>
-                        <input type="text" name="pincode" placeholder="Pincode" required>
+                        <input type="text"
+                               name="city"
+                               placeholder="City">
+
+                        <input type="text"
+                               name="pincode"
+                               placeholder="Pincode">
                     </div>
+
+                    <input type="text"
+                           name="mobile"
+                           placeholder="Mobile Number">
                 </div>
 
-                <!-- ================= Payment ================= -->
+                <!-- ================= PAYMENT ================= -->
                 <div class="checkout-card">
                     <h3>Select Payment Method</h3>
 

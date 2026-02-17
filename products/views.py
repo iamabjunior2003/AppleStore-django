@@ -1,5 +1,6 @@
+import re
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Products
+from .models import Products, Address, Order, OrderItem, Cart, CartItem
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -88,7 +89,7 @@ def filter_products(request, category_id):
 
 
 # ---------------------------
-# CART
+# CART (DATABASE VERSION)
 # ---------------------------
 
 def add_to_cart(request, id):
@@ -96,18 +97,21 @@ def add_to_cart(request, id):
         return JsonResponse({'status': 'auth_required'}, status=401)
 
     product = get_object_or_404(Products, id=id)
-    cart = request.session.get('cart', {})
 
-    pid = str(id)
-    cart[pid] = cart.get(pid, 0) + 1
+    cart, created = Cart.objects.get_or_create(user=request.user)
 
-    request.session['cart'] = cart
-    request.session.modified = True
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product
+    )
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
 
     return JsonResponse({
         'status': 'success',
-        'product_name': product.product_name,
-        'cart_count': sum(cart.values())
+        'product_name': product.product_name
     })
 
 
@@ -115,20 +119,22 @@ def cart_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    cart = request.session.get('cart', {})
+    cart = Cart.objects.filter(user=request.user).first()
     cart_items = []
     total_price = 0
 
-    for product_id, quantity in cart.items():
-        product = get_object_or_404(Products, id=int(product_id))
-        subtotal = product.product_price * quantity
-        total_price += subtotal
+    if cart:
+        items = CartItem.objects.filter(cart=cart)
 
-        cart_items.append({
-            'product': product,
-            'quantity': quantity,
-            'subtotal': subtotal
-        })
+        for item in items:
+            subtotal = item.product.product_price * item.quantity
+            total_price += subtotal
+
+            cart_items.append({
+                'product': item.product,
+                'quantity': item.quantity,
+                'subtotal': subtotal
+            })
 
     return render(request, 'cart.html', {
         'cart_items': cart_items,
@@ -140,31 +146,22 @@ def remove_from_cart(request, id):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    cart = request.session.get('cart', {})
-    product_id = str(id)
+    cart = Cart.objects.filter(user=request.user).first()
+    if cart:
+        CartItem.objects.filter(cart=cart, product_id=id).delete()
 
-    if product_id in cart:
-        del cart[product_id]
-        request.session['cart'] = cart
-        request.session.modified = True
-
-    return JsonResponse({
-        'status': 'success',
-        'cart_count': sum(cart.values())
-    })
+    return JsonResponse({'status': 'success'})
 
 
 def increase_quantity(request, id):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    cart = request.session.get('cart', {})
-    product_id = str(id)
+    cart = Cart.objects.get(user=request.user)
+    item = CartItem.objects.get(cart=cart, product_id=id)
 
-    cart[product_id] = cart.get(product_id, 0) + 1
-
-    request.session['cart'] = cart
-    request.session.modified = True
+    item.quantity += 1
+    item.save()
 
     return JsonResponse({'status': 'success'})
 
@@ -173,22 +170,21 @@ def decrease_quantity(request, id):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    cart = request.session.get('cart', {})
-    product_id = str(id)
+    cart = Cart.objects.get(user=request.user)
+    item = CartItem.objects.get(cart=cart, product_id=id)
 
-    if product_id in cart:
-        cart[product_id] -= 1
-        if cart[product_id] <= 0:
-            del cart[product_id]
+    item.quantity -= 1
 
-    request.session['cart'] = cart
-    request.session.modified = True
+    if item.quantity <= 0:
+        item.delete()
+    else:
+        item.save()
 
     return JsonResponse({'status': 'success'})
 
 
 # ---------------------------
-# AUTHENTICATION (SECURE)
+# AUTHENTICATION
 # ---------------------------
 
 def register(request):
@@ -225,7 +221,9 @@ def login(request):
         if user is not None:
             auth_login(request, user)
 
-            # Optional session values (if you still want them)
+            # ✅ SESSION VALID 1 DAY
+            request.session.set_expiry(86400)
+
             request.session['user_id'] = user.id
             request.session['username'] = user.username
             request.session['email'] = user.email
@@ -238,57 +236,127 @@ def login(request):
 
 
 def logout(request):
-    username = request.user.username if request.user.is_authenticated else None
     auth_logout(request)
-
-    if username:
-        messages.success(request, f"Logged out: {username}")
-
     return redirect('home')
 
 
 # ---------------------------
 # CHECKOUT & PAYMENT
 # ---------------------------
-
 def checkout(request):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    cart = request.session.get('cart', {})
+    cart = Cart.objects.filter(user=request.user).first()
+    addresses = Address.objects.filter(user_id=request.user)
+
     cart_items = []
     total_price = 0
 
-    for product_id, quantity in cart.items():
-        product = get_object_or_404(Products, id=int(product_id))
-        subtotal = product.product_price * quantity
-        total_price += subtotal
+    if cart:
+        items = CartItem.objects.filter(cart=cart)
+        for item in items:
+            subtotal = item.product.product_price * item.quantity
+            total_price += subtotal
 
-        cart_items.append({
-            'product': product,
-            'quantity': quantity,
-            'subtotal': subtotal
-        })
+            cart_items.append({
+                'product': item.product,
+                'quantity': item.quantity,
+                'subtotal': subtotal
+            })
 
     if request.method == "POST":
+
+        selected_address_id = request.POST.get("selected_address")
+
+        # 🟢 CASE 1: User selected existing address
+        if selected_address_id:
+            selected_address = get_object_or_404(
+                Address,
+                id=selected_address_id,
+                user_id=request.user
+            )
+
+        # 🟢 CASE 2: User added new address
+        else:
+            fullname = request.POST.get("fullname")
+            address_text = request.POST.get("address")
+            city = request.POST.get("city")
+            pincode = request.POST.get("pincode")
+            state = request.POST.get("state", "")
+            mobile = request.POST.get("mobile")
+
+            if not fullname or not address_text:
+                messages.error(request, "Please select or add an address.")
+                return redirect("checkout")
+
+            if not re.match(r'^\d{10}$', mobile):
+                messages.error(request, "Invalid Mobile Number")
+                return redirect("checkout")
+
+            selected_address = Address.objects.create(
+                user_id=request.user,
+                fullname=fullname,
+                address=address_text,
+                city=city,
+                pincode=pincode,
+                state=state,
+                mobile=mobile
+            )
+
+        # ✅ CREATE ORDER
+        order = Order.objects.create(
+            user_id=request.user,
+            address=selected_address,
+            total_amount=total_price,
+            status="Pending"
+        )
+
+        # ✅ CREATE ORDER ITEMS
+        items = CartItem.objects.filter(cart=cart)
+        for item in items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.product_price
+            )
+
+        # ✅ CLEAR CART
+        cart.delete()
+
         payment_method = request.POST.get("payment")
-        request.session["payment_amount"] = total_price
 
         if payment_method == "upi":
             return redirect("upi_payment")
         elif payment_method == "card":
             return redirect("card_payment")
         elif payment_method == "cod":
-            request.session['cart'] = {}
             return redirect("cod_success")
 
-    return render(request, 'checkout.html', {
-        'cart_items': cart_items,
-        'total_price': total_price
+    return render(request, "checkout.html", {
+        "cart_items": cart_items,
+        "total_price": total_price,
+        "addresses": addresses
     })
+
+def card_payment(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    if request.method == "POST":
+        cart = Cart.objects.filter(user=request.user).first()
+        if cart:
+            cart.delete()
+        return redirect("payment_success")
+
+    return render(request, "card_payment.html")
 
 
 def upi_payment(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     amount = request.session.get("payment_amount")
     if not amount:
         return redirect("checkout")
@@ -297,9 +365,7 @@ def upi_payment(request):
     payee_name = "Game Of Codes"
     note = "Order Payment"
 
-    upi_url = (
-        f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR&tn={note}"
-    )
+    upi_url = f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR&tn={note}"
 
     qr = qrcode.make(upi_url)
     buffer = io.BytesIO()
@@ -313,17 +379,83 @@ def upi_payment(request):
     })
 
 
-def card_payment(request):
-    if request.method == "POST":
-        request.session['cart'] = {}
-        return redirect("payment_success")
-
-    return render(request, "card_payment.html")
-
-
 def cod_success(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     return render(request, "cod_success.html")
 
 
 def payment_success(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     return render(request, "payment_success.html")
+
+def address(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    user = request.user
+    addresses = Address.objects.filter(user_id=user)
+
+    if request.method == "POST":
+        mobile = request.POST.get('mobile')
+
+        if not re.match(r'^\d{10}$', mobile):
+            return HttpResponse("Invalid Mobile Number")
+
+        Address.objects.create(
+            user_id=user,
+            fullname=request.POST.get('fullname'),
+            address=request.POST.get('address'),
+            city=request.POST.get('city'),
+            pincode=request.POST.get('pincode'),
+            state=request.POST.get('state'),
+            mobile=mobile
+        )
+
+        return redirect("checkout")
+
+    return render(request, "address.html", {
+        "addresses": addresses
+    })
+
+def edit_address(request, id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    address = get_object_or_404(Address, id=id, user_id=request.user)
+
+    if request.method == "POST":
+        address.fullname = request.POST['fullname']
+        address.address = request.POST['address']
+        address.city = request.POST['city']
+        address.pincode = request.POST['pincode']
+        address.state = request.POST['state']
+        address.mobile = request.POST['mobile']
+        address.save()
+
+        return redirect("checkout")
+
+    return render(request, "edit_address.html", {"address": address})
+
+
+def delete_address(request, id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    address = get_object_or_404(Address, id=id, user_id=request.user)
+    address.delete()
+
+    return redirect("checkout")
+
+def set_default_address(request, id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    Address.objects.filter(user_id=request.user).update(is_default=False)
+
+    address = get_object_or_404(Address, id=id, user_id=request.user)
+    address.is_default = True
+    address.save()
+
+    return redirect("checkout")

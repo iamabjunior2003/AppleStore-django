@@ -40,5 +40,10 @@ urlpatterns = [
     path("payment/card/", views.card_payment, name="card_payment"),
     path("payment/cod/", views.cod_success, name="cod_success"),
     path("payment/success/", views.payment_success, name="payment_success"),
+    path('address/', views.address, name='address'),
+    path('address/edit/<int:id>/', views.edit_address, name='edit_address'),
+    path('address/delete/<int:id>/', views.delete_address, name='delete_address'),
+    path('address/default/<int:id>/', views.set_default_address, name='set_default_address'),
+
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
