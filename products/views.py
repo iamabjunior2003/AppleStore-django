@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from urllib.parse import quote
 import qrcode
 import io
 import base64
@@ -252,6 +253,7 @@ def checkout(request):
 
     cart_items = []
     total_price = 0
+    
 
     if cart:
         items = CartItem.objects.filter(cart=cart)
@@ -333,7 +335,7 @@ def checkout(request):
             return redirect("card_payment")
         elif payment_method == "cod":
             return redirect("cod_success")
-
+    request.session["payment_amount"] = str(total_price)
     return render(request, "checkout.html", {
         "cart_items": cart_items,
         "total_price": total_price,
@@ -348,7 +350,7 @@ def card_payment(request):
         cart = Cart.objects.filter(user=request.user).first()
         if cart:
             cart.delete()
-        return redirect("payment_success")
+        return redirect("cod_success")
 
     return render(request, "card_payment.html")
 
@@ -361,15 +363,19 @@ def upi_payment(request):
     if not amount:
         return redirect("checkout")
 
+    amount = str(amount)
+
     upi_id = "iamabjunior-3@okhdfcbank"
-    payee_name = "Game Of Codes"
-    note = "Order Payment"
+    payee_name = quote("Game Of Codes")
+    note = quote("Order Payment")
 
     upi_url = f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR&tn={note}"
 
     qr = qrcode.make(upi_url)
     buffer = io.BytesIO()
     qr.save(buffer, format="PNG")
+    buffer.seek(0)
+
     qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
     return render(request, "upi_payment.html", {
@@ -377,7 +383,6 @@ def upi_payment(request):
         "amount": amount,
         "upi_id": upi_id
     })
-
 
 def cod_success(request):
     if not request.user.is_authenticated:
@@ -388,7 +393,7 @@ def cod_success(request):
 def payment_success(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, "payment_success.html")
+    return render(request, "cod_success.html")
 
 def address(request):
     if not request.user.is_authenticated:
