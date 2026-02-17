@@ -104,16 +104,12 @@ if os.environ.get("DATABASE_URL"):
         )
     }
 else:
-    # Local Development MySQL
+    # Local Development (SQLite)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'apple_products',
-            'USER': 'root',
-            'PASSWORD': 'Aditya@0229',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }   
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
 
 # ==============================
